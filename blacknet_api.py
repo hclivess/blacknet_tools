@@ -65,6 +65,64 @@ elif command == "accinfo":
     address = arg_array[0]
     parameter = "ledger/get/{}".format(address)
 
+elif command == "transfer":
+    mnemonic = " ".join(arg_array[0:10])
+    fee = arg_array[11]
+    amount = arg_array[12]
+    to = arg_array[13]
+    try:
+        message = arg_array[14]
+    except:
+        message = ""
+    try:
+        encrypted = arg_array[15]
+    except:
+        encrypted = ""
+    parameter = "transfer/{}/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,message,encrypted)
+
+elif command == "burn":
+    mnemonic = " ".join(arg_array[0:10])
+    fee = arg_array[11]
+    amount = arg_array[12]
+    message = arg_array[13]
+    parameter = "burn/{}/{}/{}/{}".format(mnemonic, fee,amount,message)
+
+elif command == "lease":
+    mnemonic = " ".join(arg_array[0:10])
+    fee = arg_array[11]
+    amount = arg_array[12]
+    to = arg_array[13]
+    parameter = "lease/{}/{}/{}/{}".format(mnemonic, fee,amount,to)
+
+elif command == "clease":
+    mnemonic = " ".join(arg_array[0:10])
+    fee = arg_array[11]
+    amount = arg_array[12]
+    to = arg_array[13]
+    height = arg_array[14]
+    parameter = "cancellease/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,height)
+
+elif command == "sign":
+    mnemonic = " ".join(arg_array[0:10])
+    message = arg_array[11]
+    parameter = "signmessage/{}/{}".format(mnemonic, message)
+
+elif command == "verify":
+    mnemonic = " ".join(arg_array[0:10])
+    account = arg_array[11]
+    signature = arg_array[12]
+    message = arg_array[13]
+    parameter = "verifymessage/{}/{}/{}".format(account,signature, message)
+
+elif command == "addpeer":
+    address = arg_array[0]
+    try:
+        port = arg_array[1]
+    except:
+        port = ""
+
+    parameter = "addpeer/{}/{}".format(address,port)
+
 elif command == "newacc":
     parameter = "account/generate"
 
@@ -79,8 +137,8 @@ else:
 link = "http://localhost:8283/api/v1/{}".format(parameter)
 print (link)
 
-methods_get = "peerinfo","nodeinfo","ledger","txpool","getblock","getblockhash", "newacc"
-methods_post = "stake","stakestop","minfo"
+methods_get = "peerinfo","nodeinfo","ledger","txpool","getblock","getblockhash", "newacc","verify","addpeer"
+methods_post = "stake","stakestop","minfo","transfer","burn","lease","clease","sign"
 
 if command in methods_get:
     print("GET method")
