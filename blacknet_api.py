@@ -2,150 +2,170 @@
 
 import requests
 import sys
+import json
 
-def getargs():
-    print ('Number of arguments:', len(sys.argv), 'arguments.')
-    print ('Argument List:', str(sys.argv))
+class Interface():
+    def __init__(self):
+        self.post = False
+        self.arg_array = None
+        self.link = None
+        self.parameter = None
+        self.command = None
+        self.r = None
 
-    try:
-        command = sys.argv[1]
-
-        try:
-            arg_array = sys.argv
-            del arg_array[:2]
-        except:
-            arg_array = None
-
-    except:
-
-        entry = input("No argument detected, please insert command manually\n").split()
-        command = entry[0]
-        print ("entry",entry)
-        print("command", command)
+    def getargs(self):
+        print ('Number of arguments:', len(sys.argv), 'arguments.')
+        print ('Argument List:', str(sys.argv))
 
         try:
-            arg_array = entry
-            del arg_array[:1]
+            self.command = sys.argv[1]
+
+            try:
+                self.arg_array = sys.argv
+                del self.arg_array[:2]
+            except:
+                self.arg_array = None
+
         except:
-            arg_array = None
 
-    print(command, arg_array)
-    return command, arg_array
+            entry = input("No argument detected, please insert command manually\n").split()
+            self.command = entry[0]
+            print ("entry",entry)
+            print("self.command", self.command)
 
-command, arg_array = getargs()
-
-
-if command == "stake":
-    mnemonic = " ".join(arg_array)
-    parameter = "staker/start/{}".format(mnemonic)
-
-elif command == "stakestop":
-    mnemonic = " ".join(arg_array)
-    parameter = "staker/stop/{}".format(mnemonic)
-
-elif command == "mnemonicinfo":
-    mnemonic = arg_array[0]
-    parameter = "mnemonic/info/{}".format(mnemonic)
+            try:
+                self.arg_array = entry
+                del self.arg_array[:1]
+            except:
+                self.arg_array = None
 
 
+    def go(self):
 
-elif command == "getblock":
-    hash = arg_array[0]
-    try:
-        txdetail = arg_array[1]
-    except:
-        txdetail = ""
-    parameter = "blockdb/get/{}/{}".format(hash, txdetail)
+        if self.command == "stake":
+            self.post = True
+            mnemonic = " ".join(self.arg_array)
+            self.parameter = "staker/start/{}".format(mnemonic)
 
-elif command == "getblockhash":
-    height = arg_array[0]
-    parameter = "blockdb/getblockhash/{}".format(height)
+        elif self.command == "stakestop":
+            self.post = True
+            mnemonic = " ".join(self.arg_array)
+            self.parameter = "staker/stop/{}".format(mnemonic)
 
-elif command == "accinfo":
-    address = arg_array[0]
-    parameter = "ledger/get/{}".format(address)
+        elif self.command == "mnemonicinfo":
+            mnemonic = self.arg_array[0]
+            self.parameter = "mnemonic/info/{}".format(mnemonic)
 
-elif command == "transfer":
-    mnemonic = " ".join(arg_array[0:10])
-    fee = arg_array[11]
-    amount = arg_array[12]
-    to = arg_array[13]
-    try:
-        message = arg_array[14]
-    except:
-        message = ""
-    try:
-        encrypted = arg_array[15]
-    except:
-        encrypted = ""
-    parameter = "transfer/{}/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,message,encrypted)
 
-elif command == "burn":
-    mnemonic = " ".join(arg_array[0:10])
-    fee = arg_array[11]
-    amount = arg_array[12]
-    message = arg_array[13]
-    parameter = "burn/{}/{}/{}/{}".format(mnemonic, fee,amount,message)
 
-elif command == "lease":
-    mnemonic = " ".join(arg_array[0:10])
-    fee = arg_array[11]
-    amount = arg_array[12]
-    to = arg_array[13]
-    parameter = "lease/{}/{}/{}/{}".format(mnemonic, fee,amount,to)
+        elif self.command == "getblock":
+            hash = self.arg_array[0]
+            try:
+                txdetail = self.arg_array[1]
+            except:
+                txdetail = ""
+            self.parameter = "blockdb/get/{}/{}".format(hash, txdetail)
 
-elif command == "clease":
-    mnemonic = " ".join(arg_array[0:10])
-    fee = arg_array[11]
-    amount = arg_array[12]
-    to = arg_array[13]
-    height = arg_array[14]
-    parameter = "cancellease/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,height)
+        elif self.command == "getblockhash":
+            height = self.arg_array[0]
+            self.parameter = "blockdb/getblockhash/{}".format(height)
 
-elif command == "sign":
-    mnemonic = " ".join(arg_array[0:10])
-    message = arg_array[11]
-    parameter = "signmessage/{}/{}".format(mnemonic, message)
+        elif self.command == "accinfo":
+            address = self.arg_array[0]
+            self.parameter = "ledger/get/{}".format(address)
 
-elif command == "verify":
-    mnemonic = " ".join(arg_array[0:10])
-    account = arg_array[11]
-    signature = arg_array[12]
-    message = arg_array[13]
-    parameter = "verifymessage/{}/{}/{}".format(account,signature, message)
+        elif self.command == "transfer":
+            self.post = True
+            mnemonic = " ".join(self.arg_array[0:10])
+            fee = self.arg_array[11]
+            amount = self.arg_array[12]
+            to = self.arg_array[13]
+            try:
+                message = self.arg_array[14]
+            except:
+                message = ""
+            try:
+                encrypted = self.arg_array[15]
+            except:
+                encrypted = ""
+            self.parameter = "transfer/{}/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,message,encrypted)
 
-elif command == "addpeer":
-    address = arg_array[0]
-    try:
-        port = arg_array[1]
-    except:
-        port = ""
+        elif self.command == "burn":
+            self.post = True
+            mnemonic = " ".join(self.arg_array[0:10])
+            fee = self.arg_array[11]
+            amount = self.arg_array[12]
+            message = self.arg_array[13]
+            self.parameter = "burn/{}/{}/{}/{}".format(mnemonic, fee,amount,message)
 
-    parameter = "addpeer/{}/{}".format(address,port)
+        elif self.command == "lease":
+            self.post = True
+            mnemonic = " ".join(self.arg_array[0:10])
+            fee = self.arg_array[11]
+            amount = self.arg_array[12]
+            to = self.arg_array[13]
+            self.parameter = "lease/{}/{}/{}/{}".format(mnemonic, fee,amount,to)
 
-elif command == "newacc":
-    parameter = "account/generate"
+        elif self.command == "clease":
+            self.post = True
+            mnemonic = " ".join(self.arg_array[0:10])
+            fee = self.arg_array[11]
+            amount = self.arg_array[12]
+            to = self.arg_array[13]
+            height = self.arg_array[14]
+            self.parameter = "cancellease/{}/{}/{}/{}/{}".format(mnemonic, fee,amount,to,height)
 
-elif command == "minfo":
-    mnemonic = arg_array[0]
-    parameter = "mnemonic/info/{}".format(mnemonic)
+        elif self.command == "sign":
+            self.post = True
+            mnemonic = " ".join(self.arg_array[0:10])
+            message = self.arg_array[11]
+            self.parameter = "signmessage/{}/{}".format(mnemonic, message)
 
-else:
-    print('direct method')
-    parameter = command
+        elif self.command == "verify":
+            account = self.arg_array[11]
+            signature = self.arg_array[12]
+            message = self.arg_array[13]
+            self.parameter = "verifymessage/{}/{}/{}".format(account,signature, message)
 
-link = "http://localhost:8283/api/v1/{}".format(parameter)
-print (link)
+        elif self.command == "addpeer":
+            address = self.arg_array[0]
+            try:
+                port = self.arg_array[1]
+            except:
+                port = ""
 
-methods_get = "peerinfo","nodeinfo","ledger","txpool","getblock","getblockhash", "newacc","verify","addpeer"
-methods_post = "stake","stakestop","minfo","transfer","burn","lease","clease","sign"
+            self.parameter = "addpeer/{}/{}".format(address,port)
 
-if command in methods_get:
-    print("GET method")
-    r = requests.get(link)
-    print(r.text, r.status_code, r.reason)
+        elif self.command == "newacc":
+            self.parameter = "account/generate"
 
-if command in methods_post:
-    print("POST method")
-    r = requests.post(link)
-    print(r.text, r.status_code, r.reason)
+        elif self.command == "minfo":
+            self.post = True
+            mnemonic = self.arg_array[0]
+            self.parameter = "mnemonic/info/{}".format(mnemonic)
+
+        else:
+            print('direct method')
+            self.parameter = self.command
+
+        self.link = "http://localhost:8283/api/v1/{}".format(self.parameter)
+        print (self.link)
+
+        if self.post:
+            print("POST method")
+            self.r = requests.post(self.link)
+
+        else:
+            print("GET method")
+            self.r = requests.get(self.link)
+
+        #text
+        #status_code
+        #reason
+
+
+if __name__ == "__main__":
+    interface = Interface()
+    interface.getargs()
+    interface.go()
+    print (interface.r.text)
