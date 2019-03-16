@@ -68,7 +68,7 @@ class Application(tk.Frame):
         self.amount.pack(side="top")
         #self.address["command"] = self.say_hi
 
-        self.send = tk.Button(self, text="SEND", fg="green",
+        self.send = tk.Button(self, text="transfer", fg="green",
                               command=operations.send)
         self.send.pack(side="top")
 
@@ -80,12 +80,13 @@ class Application(tk.Frame):
                               command=operations.stopstake)
         self.stop_stake.pack(side="top")
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
+        self.refresh = tk.Button(self, text="refresh", fg="red",
+                              command=operations.refresh)
+        self.refresh.pack(side="top")
+
+        self.quit = tk.Button(self, text="quit", fg="red",
                               command=self.master.destroy)
         self.quit.pack(side="top")
-
-    def say_hi(self):
-        print("hi there, everyone!")
 
 
 
@@ -102,7 +103,13 @@ class Wallet():
         self.address = self.wallet['address']
         self.publickey = self.wallet['publicKey']
 
-        print(self.address)
+        self.getbalance()
+
+    def generate(self):
+        with open("secret.json", 'w') as keyfile:
+            keyfile.write(operations.newacc())
+
+    def getbalance(self):
         try:
             self.balance_request = json.loads(requests.get("http://localhost:8283/api/v1/ledger/get/{}".format(self.address)).text)
             self.seq = self.balance_request["seq"]
@@ -113,10 +120,6 @@ class Wallet():
             self.balance = 0
             self.staking_balance = 0
 
-    def generate(self):
-        with open("secret.json", 'w') as keyfile:
-            keyfile.write(operations.newacc())
-
 class Operations():
     def send(self):
         print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get(),app.recipient.get())).text)
@@ -126,8 +129,10 @@ class Operations():
         print(requests.post("http://localhost:8283/api/v1/staker/start/{}".format(wallet.mnemonic)).text)
     def newacc(self):
         result = requests.get("http://localhost:8283/api/v1/account/generate").text
-        print (result)
         return result
+    def refresh(self):
+        wallet.getbalance()
+        app.balance["text"] = wallet.balance
 
 
 if __name__ == "__main__":
