@@ -8,7 +8,7 @@ class Application(tk.Frame):
         super().__init__(master)
         self.master = master
 
-        self.pack()
+        self.grid()
         self.create_widgets()
 
 
@@ -26,67 +26,67 @@ class Application(tk.Frame):
 
         self.address_label = tk.Label(self)
         self.address_label["text"] = "Address: "
-        self.address_label.pack(side="top")
+        self.address_label.grid(row=0, column=0, sticky='', pady=5, padx=5)
 
         self.address = tk.Label(self)
         self.address["text"] = wallet.address
         #self.address["command"] = self.say_hi
-        self.address.pack(side="top")
+        self.address.grid(row=0, column=1, sticky='W', pady=5, padx=5)
 
         self.publickey_label = tk.Label(self)
         self.publickey_label["text"] = "Public Key: "
-        self.publickey_label.pack(side="top")
+        self.publickey_label.grid(row=2, column=0, sticky='', pady=5, padx=5)
 
         self.publickey = tk.Label(self)
         self.publickey["text"] = wallet.publickey
         #self.address["command"] = self.say_hi
-        self.publickey.pack(side="top")
+        self.publickey.grid(row=2, column=1, sticky='W', pady=5, padx=5)
 
         self.balance_label = tk.Label(self)
         self.balance_label["text"] = "Balance: "
-        self.balance_label.pack(side="top")
+        self.balance_label.grid(row=4, column=0, sticky='', pady=5, padx=5)
 
         self.balance = tk.Label(self)
         self.balance["text"] = wallet.balance
         #self.address["command"] = self.say_hi
-        self.balance.pack(side="top")
+        self.balance.grid(row=4, column=1, sticky='W', pady=5, padx=5)
 
         self.recipient_label = tk.Label(self)
         self.recipient_label["text"] = "Recipient: "
-        self.recipient_label.pack(side="top")
+        self.recipient_label.grid(row=5, column=0, sticky='', pady=5, padx=5)
         self.recipient_value = tk.StringVar()
         self.recipient_value.set(wallet.address)
-        self.recipient = tk.Entry(self, textvariable=self.recipient_value)
-        self.recipient.pack(side="top")
+        self.recipient = tk.Entry(self, textvariable=self.recipient_value, width=70)
+        self.recipient.grid(row=5, column=1, sticky='W', pady=5, padx=5)
 
         self.amount_label = tk.Label(self)
         self.amount_label["text"] = "Amount: "
-        self.amount_label.pack(side="top")
+        self.amount_label.grid(row=6, column=0, sticky='', pady=5, padx=5)
         self.amount_label = tk.StringVar()
         self.amount_label.set(0)
-        self.amount = tk.Entry(self, textvariable=self.amount_label)
-        self.amount.pack(side="top")
+        self.amount = tk.Entry(self, textvariable=self.amount_label, width=70)
+        self.amount.grid(row=6, column=1, sticky='W', pady=5, padx=5)
         #self.address["command"] = self.say_hi
 
         self.send = tk.Button(self, text="transfer", fg="green",
                               command=operations.send)
-        self.send.pack(side="top")
+        self.send.grid(row=7, column=1, sticky='WE', pady=5, padx=5)
 
         self.stake = tk.Button(self, text="Stake", fg="green",
                               command=operations.stake)
-        self.stake.pack(side="top")
+        self.stake.grid(row=8, column=1, sticky='WE', pady=5, padx=5)
 
         self.stop_stake = tk.Button(self, text="Stop Staking", fg="green",
                               command=operations.stopstake)
-        self.stop_stake.pack(side="top")
+        self.stop_stake.grid(row=9, column=1, sticky='WE', pady=5, padx=5)
 
         self.refresh = tk.Button(self, text="refresh", fg="red",
                               command=operations.refresh)
-        self.refresh.pack(side="top")
+        self.refresh.grid(row=10, column=1, sticky='WE', pady=5, padx=5)
 
         self.quit = tk.Button(self, text="quit", fg="red",
                               command=self.master.destroy)
-        self.quit.pack(side="top")
+        self.quit.grid(row=11, column=1, sticky='WE', pady=5, padx=5)
 
 
 
