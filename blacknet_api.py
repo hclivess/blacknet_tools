@@ -2,7 +2,6 @@
 
 import requests
 import sys
-import json
 
 class Interface():
     def __init__(self):
