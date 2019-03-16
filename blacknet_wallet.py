@@ -97,7 +97,7 @@ class Wallet():
 
 class Operations():
     def send(self):
-        print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get(),app.recipient.get())))
+        print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get(),app.recipient.get())).text)
 
 
 if __name__ == "__main__":
