@@ -1,6 +1,7 @@
 import json
 import tkinter as tk
 import requests
+import os
 
 class Application(tk.Frame):
     def __init__(self, master=None):
@@ -71,6 +72,13 @@ class Application(tk.Frame):
                               command=operations.send)
         self.send.pack(side="top")
 
+        self.stake = tk.Button(self, text="Stake", fg="green",
+                              command=operations.stake)
+        self.stake.pack(side="top")
+
+        self.stop_stake = tk.Button(self, text="Stop Staking", fg="green",
+                              command=operations.stopstake)
+        self.stop_stake.pack(side="top")
 
         self.quit = tk.Button(self, text="QUIT", fg="red",
                               command=self.master.destroy)
@@ -84,27 +92,49 @@ class Application(tk.Frame):
 class Wallet():
     def __init__(self):
 
+        if not os.path.exists("secret.json"):
+            self.generate()
+
         with open("secret.json", 'r') as keyfile:
-            self.wallet = json.load(keyfile)
+            self.wallet = json.loads(keyfile.read())
 
         self.mnemonic = self.wallet['mnemonic']
         self.address = self.wallet['address']
         self.publickey = self.wallet['publicKey']
-        self.balance_request = json.loads(requests.get("http://localhost:8283/api/v1/ledger/get/{}".format(self.address)).text)
-        self.seq = self.balance_request["seq"]
-        self.balance = self.balance_request["balance"]
-        self.staking_balance = self.balance_request["stakingBalance"]
+
+        print(self.address)
+        try:
+            self.balance_request = json.loads(requests.get("http://localhost:8283/api/v1/ledger/get/{}".format(self.address)).text)
+            self.seq = self.balance_request["seq"]
+            self.balance = self.balance_request["balance"]
+            self.staking_balance = self.balance_request["stakingBalance"]
+        except:
+            self.seq = 0
+            self.balance = 0
+            self.staking_balance = 0
+
+    def generate(self):
+        with open("secret.json", 'w') as keyfile:
+            keyfile.write(operations.newacc())
 
 class Operations():
     def send(self):
         print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get(),app.recipient.get())).text)
+    def stake(self):
+        print(requests.post("http://localhost:8283/api/v1/staker/start/{}".format(wallet.mnemonic)).text)
+    def stopstake(self):
+        print(requests.post("http://localhost:8283/api/v1/staker/start/{}".format(wallet.mnemonic)).text)
+    def newacc(self):
+        result = requests.get("http://localhost:8283/api/v1/account/generate").text
+        print (result)
+        return result
 
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.wm_title("Blacknet API Wallet")
-    wallet = Wallet()
     operations = Operations()
+    wallet = Wallet()
     app = Application(master=root)
 
 
