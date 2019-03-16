@@ -72,11 +72,11 @@ class Application(tk.Frame):
                               command=operations.send)
         self.send.grid(row=7, column=1, sticky='WE', pady=5, padx=5)
 
-        self.stake = tk.Button(self, text="Stake", fg="green",
+        self.stake = tk.Button(self, text="stake", fg="green",
                               command=operations.stake)
         self.stake.grid(row=8, column=1, sticky='WE', pady=5, padx=5)
 
-        self.stop_stake = tk.Button(self, text="Stop Staking", fg="green",
+        self.stop_stake = tk.Button(self, text="stop staking", fg="green",
                               command=operations.stopstake)
         self.stop_stake.grid(row=9, column=1, sticky='WE', pady=5, padx=5)
 
