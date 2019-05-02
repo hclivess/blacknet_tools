@@ -112,9 +112,9 @@ class Wallet():
     def getbalance(self):
         try:
             self.balance_request = json.loads(requests.get("http://localhost:8283/api/v1/ledger/get/{}".format(self.address)).text)
-            self.seq = self.balance_request["seq"]
-            self.balance = self.balance_request["balance"]
-            self.staking_balance = self.balance_request["stakingBalance"]
+            self.seq = self.balance_request["seq"] / 100000000
+            self.balance = self.balance_request["balance"] / 100000000
+            self.staking_balance = self.balance_request["stakingBalance"] / 100000000
         except:
             self.seq = 0
             self.balance = 0
@@ -122,7 +122,7 @@ class Wallet():
 
 class Operations():
     def send(self):
-        print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get(),app.recipient.get())).text)
+        print(requests.post("http://localhost:8283/api/v1/transfer/{}/{}/{}/{}".format(wallet.mnemonic,100000,app.amount.get() * 100000000,app.recipient.get())).text)
     def stake(self):
         print(requests.post("http://localhost:8283/api/v1/staker/start/{}".format(wallet.mnemonic)).text)
     def stopstake(self):
